@@ -13,6 +13,10 @@
 
             3. install JSW Token - npm i jsonwebtoken
 
+            4. install mongoose - npm i mangoose
+
+            5. install cors - npm i cors
+
             
                 basic steps 
     
@@ -49,5 +53,20 @@
 
                 10.1 Application specific
                 10.2 Router specific
+
+        11. MongoDB connection
+
+                11.1 install mongoose
+                11.2 create db.js file
+                11.3 import mongoose in db.js
+                11.4 state connection string using mongoose
+                11.5 create model / collection
+        
+        12. Asynchronous function resolving - promise
+
+                12.1 resolved state - .then()
+                12.2 Reject state - catch()
+        
+        13. CORS - Cross Origin Resource Shairing
 
                 

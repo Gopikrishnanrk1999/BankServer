@@ -1,4 +1,5 @@
 // import jsonwebtoken 
+const { status } = require('express/lib/response');
 const jwt = require('jsonwebtoken')
 
 // import db.js 
@@ -54,6 +55,7 @@ const db= require('./db')
       password: pswd
     }).then(user =>{
       if(user) {
+        console.log(user);
         currentUser = user.username
         currentAcno = acno
         // token generation
@@ -80,12 +82,19 @@ const db= require('./db')
 }
 
 // deposit 
-const deposit=(acno,password,amt) => {
+const deposit=(req,acno,password,amt) => {
   var amount=parseInt(amt)
   return db.User.findOne({
     acno,password
   }).then(user=>{
     if(user){
+      if(acno != req.currentAcno){
+        return {
+          status:false,
+          message:"Permission denied",
+          statusCode:401
+      } 
+      }
       user.balance+=amount
       user.transaction.push({
         type:"CREDIT",
@@ -110,12 +119,19 @@ const deposit=(acno,password,amt) => {
 
 // withdraw  
 
-const withdraw = (acno,password,amt)=> {
+const withdraw = (req,acno,password,amt)=> {
   var amount = parseInt(amt)
   return db.User.findOne({
     acno,password
   }).then(user=>{
     if(user){
+      if(acno != req.currentAcno){
+        return {
+          status:false,
+          message:"Permission denied",
+          statusCode:401
+      } 
+      }
     if(user.balance>amount){
 
       user.balance -= amount
@@ -173,6 +189,27 @@ const getTransaction=(acno)=>{
   })
 }
 
+// Delete 
+
+const deleteAcc = (acno)=>{
+  return db.User.deleteOne({
+    acno
+  }).then(user=>{
+    if(!user){
+      return{
+      status: false,
+      message: "Operation failed",
+      statusCode: 401
+    }
+  }
+    return{
+      status:true,
+      message:"Successfully deleted",
+      statusCode:200
+    }
+
+  })
+}
 
 
 //   exportin to use in data service  
@@ -182,5 +219,6 @@ const getTransaction=(acno)=>{
        login,
        deposit,
        withdraw,
-       getTransaction
-    }
+       getTransaction,
+       deleteAcc
+      }

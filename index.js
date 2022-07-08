@@ -42,6 +42,7 @@ const jwtMiddleware = (req,res,next)=>{
     // verify token 
     const data = jwt.verify(token,'Secretkey2255')
     console.log(data);
+    req.currentAcno = data.currentAcno
     next()
     }
     catch{
@@ -73,7 +74,7 @@ app.post('/login',(req,res)=>{
 
 // Deposit API 
 app.post('/deposit',jwtMiddleware,(req,res)=>{
-    dataService.deposit(req.body.acno,req.body.password,req.body.amt)
+    dataService.deposit(req,req.body.acno,req.body.password,req.body.amt)
     .then(result =>{
         res.status(result.statusCode).json(result)
     })
@@ -81,7 +82,7 @@ app.post('/deposit',jwtMiddleware,(req,res)=>{
 
 //    Withdraw API 
 app.post('/withdraw',jwtMiddleware,(req,res)=>{
-    dataService.withdraw(req.body.acno,req.body.password,req.body.amt)
+    dataService.withdraw(req,req.body.acno,req.body.password,req.body.amt)
     .then(result =>{
         res.status(result.statusCode).json(result)
     })
@@ -89,11 +90,19 @@ app.post('/withdraw',jwtMiddleware,(req,res)=>{
 
 //    Transaction API 
 app.post('/transaction',jwtMiddleware,(req,res)=>{
-    const result = dataService.getTransaction(req.body.acno)
+    dataService.getTransaction(req.body.acno)
     .then(result =>{
         res.status(result.statusCode).json(result)
     })
    })
+
+// Delete API 
+app.delete('/deleteAcc/:acno',jwtMiddleware,(req,res)=>{
+    dataService.deleteAcc(req.params.acno)
+    .then(result =>{
+        res.status(result.statusCode).json(result)
+})
+})
    
 // user request resolving
 
